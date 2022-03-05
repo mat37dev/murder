@@ -1,0 +1,5 @@
+name: Murder
+version: '${project.version}'
+main: frm.mat_37.murder.murder.Murder
+authors: [ mat_37 ]
+description: Plugin Murder
