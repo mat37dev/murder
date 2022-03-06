@@ -1,6 +1,6 @@
 name: Murder
 version: '${project.version}'
-main: frm.mat_37.murder.murder.Murder
+main: frm.mat_37.murder.murder.main
 authors: [ mat_37 ]
 description: Plugin Murder
 commands:
