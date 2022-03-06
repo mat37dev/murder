@@ -3,3 +3,10 @@ version: '${project.version}'
 main: frm.mat_37.murder.murder.Murder
 authors: [ mat_37 ]
 description: Plugin Murder
+commands:
+  murderEditor:
+    permission: murder.admin
+    description: Commande pour gérer les arenes
+  murder:
+    permission: default
+    description: Commande pour jouer
