@@ -86,10 +86,10 @@ public class main extends JavaPlugin {
 
                 }
             }
-            if(areneConfig.getConfigurationSection("arenes."+name+".spawnsGolds") != null){
-                for (String spawnGold : areneConfig.getConfigurationSection("arenes."+name+".spawnsGolds").getKeys(false))
+            if(areneConfig.getConfigurationSection("arenes."+name+".spawnsGold") != null){
+                for (String spawnGold : areneConfig.getConfigurationSection("arenes."+name+".spawnsGold").getKeys(false))
                 {
-                    spawnsGoldsTemp.add(convertLocation((String) areneConfig.get("arenes."+name+".spawnsGolds."+spawnGold)));
+                    spawnsGoldsTemp.add(convertLocation((String) areneConfig.get("arenes."+name+".spawnsGold."+spawnGold)));
                 }
             }
             MArena temp = new MArena(name,stateTemp,spawnsTemp,spawnsGoldsTemp,lobbyTemp);
@@ -113,7 +113,7 @@ public class main extends JavaPlugin {
         Location result = null;
 
         if(!locationString.equalsIgnoreCase("")){
-            String[] parsedLoc = locationString.split(";");
+            String[] parsedLoc = locationString.split(",");
             String world = parsedLoc[0];
             double x = Double.valueOf(parsedLoc[1]);
             double y = Double.valueOf(parsedLoc[2]);

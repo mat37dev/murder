@@ -24,8 +24,13 @@ public class CommandMurderEditor implements CommandExecutor{
                     pls.sendMessage("/murderEditor create <name>");
                     pls.sendMessage("/murderEditor remove <name>");
                     pls.sendMessage("/murderEditor setLobby <name>");
-                    pls.sendMessage("/murderEditor info <name>");
+                    pls.sendMessage("/murderEditor addSpawn <name>");
+                    pls.sendMessage("/murderEditor addSpawnGold <name>");
+                    pls.sendMessage("/murderEditor removeSpawn <name>");
+                    pls.sendMessage("/murderEditor removeSpawnGold <name>");
+                    pls.sendMessage("/murderEditor save <name>");
                     pls.sendMessage("/murderEditor setEditor <name>");
+                    pls.sendMessage("/murderEditor info <name>");
                     pls.sendMessage("/murderEditor list");
 
                     return true;
@@ -77,7 +82,7 @@ public class CommandMurderEditor implements CommandExecutor{
                         pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
                     else{
                         main.getArene(args[1]).setLobby(pls.getLocation());
-                        main.areneConfig.set("arenes."+args[1]+".lobby", pls.getWorld().getName()+";"+pls.getLocation().getX()+";"+pls.getLocation().getY()+";"+pls.getLocation().getZ());
+                        main.areneConfig.set("arenes."+args[1]+".lobby", pls.getWorld().getName()+","+pls.getLocation().getX()+","+pls.getLocation().getY()+","+pls.getLocation().getZ());
                         pls.sendMessage("Le lobby à bien été set");
                         main.saveArena();
                     }
@@ -99,7 +104,7 @@ public class CommandMurderEditor implements CommandExecutor{
                             pls.sendMessage("Nombre de spawn max atteind");
                         else{
                             main.getArene(args[1]).addSpawns(pls.getLocation());
-                            main.areneConfig.set("arenes."+args[1]+".spawns."+(nbSpawns+1), pls.getWorld().getName()+";"+pls.getLocation().getX()+";"+pls.getLocation().getY()+";"+pls.getLocation().getZ());
+                            main.areneConfig.set("arenes."+args[1]+".spawns."+(nbSpawns+1), pls.getWorld().getName()+","+pls.getLocation().getX()+","+pls.getLocation().getY()+","+pls.getLocation().getZ());
                             pls.sendMessage("Un spawn a été ajouté");
                             main.saveArena();
                         }
@@ -122,7 +127,7 @@ public class CommandMurderEditor implements CommandExecutor{
                             pls.sendMessage("Nombre de Spawn Gold max atteind");
                         else{
                             main.getArene(args[1]).addSpawnsGolds(pls.getLocation());
-                            main.areneConfig.set("arenes."+args[1]+".spawnsGold."+(nbSpawnsGolds+1), pls.getWorld().getName()+";"+pls.getLocation().getX()+";"+pls.getLocation().getY()+";"+pls.getLocation().getZ());
+                            main.areneConfig.set("arenes."+args[1]+".spawnsGold."+(nbSpawnsGolds+1), pls.getWorld().getName()+","+pls.getLocation().getX()+","+pls.getLocation().getY()+","+pls.getLocation().getZ());
                             pls.sendMessage("Un Spawn Gold a été ajouté");
                             main.saveArena();
                         }
