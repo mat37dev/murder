@@ -25,7 +25,9 @@ public class CommandMurderEditor implements CommandExecutor{
                     pls.sendMessage("/murderEditor remove <name>");
                     pls.sendMessage("/murderEditor setLobby <name>");
                     pls.sendMessage("/murderEditor info <name>");
+                    pls.sendMessage("/murderEditor setEditor <name>");
                     pls.sendMessage("/murderEditor list");
+
                     return true;
                 }
                 //region create
@@ -52,7 +54,7 @@ public class CommandMurderEditor implements CommandExecutor{
                 else if(args[0].equalsIgnoreCase("remove")) {
                     if (args.length != 2)
                         pls.sendMessage("Erreur: La commande est: /murderEditor remove <name>");
-                    else if(main.getArene(args[1]) == null ){
+                    else if(!arenaExists(args[1])){
                         pls.sendMessage("Aucune arène ne porte ce nom");
                     }
                     else{
@@ -71,6 +73,8 @@ public class CommandMurderEditor implements CommandExecutor{
                     else if(!arenaExists(args[1]) ){
                         pls.sendMessage("Aucune arène ne porte ce nom");
                     }
+                    else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
+                        pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
                     else{
                         main.getArene(args[1]).setLobby(pls.getLocation());
                         main.areneConfig.set("arenes."+args[1]+".lobby", pls.getWorld().getName()+";"+pls.getLocation().getX()+";"+pls.getLocation().getY()+";"+pls.getLocation().getZ());
@@ -87,6 +91,8 @@ public class CommandMurderEditor implements CommandExecutor{
                     else if(!arenaExists(args[1]) ){
                         pls.sendMessage("Aucune arène ne porte ce nom");
                     }
+                    else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
+                        pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
                     else{
                         int nbSpawns = main.getArene(args[1]).getSpawns().size();
                         if(nbSpawns == 12)
@@ -97,6 +103,106 @@ public class CommandMurderEditor implements CommandExecutor{
                             pls.sendMessage("Un spawn a été ajouté");
                             main.saveArena();
                         }
+                    }
+                    return true;
+                }
+                //endregion
+                //region addSpawnGold
+                else if(args[0].equalsIgnoreCase("addSpawnGold")){
+                    if (args.length != 2)
+                        pls.sendMessage("Erreur: La commande est: /murderEditor addSpawnGold <name>");
+                    else if(!arenaExists(args[1]) ){
+                        pls.sendMessage("Aucune arène ne porte ce nom");
+                    }
+                    else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
+                        pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
+                    else{
+                        int nbSpawnsGolds = main.getArene(args[1]).getSpawnsGolds().size();
+                        if(nbSpawnsGolds == 24)
+                            pls.sendMessage("Nombre de Spawn Gold max atteind");
+                        else{
+                            main.getArene(args[1]).addSpawnsGolds(pls.getLocation());
+                            main.areneConfig.set("arenes."+args[1]+".spawnsGold."+(nbSpawnsGolds+1), pls.getWorld().getName()+";"+pls.getLocation().getX()+";"+pls.getLocation().getY()+";"+pls.getLocation().getZ());
+                            pls.sendMessage("Un Spawn Gold a été ajouté");
+                            main.saveArena();
+                        }
+                    }
+                    return true;
+                }
+                //endregion
+                //region removeSpawn
+                else if(args[0].equalsIgnoreCase("removeSpawn")){
+                    if (args.length != 2)
+                        pls.sendMessage("Erreur: La commande est: /murderEditor removeSpawn <name>");
+                    else if(!arenaExists(args[1]) ){
+                        pls.sendMessage("Aucune arène ne porte ce nom");
+                    }
+                    else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
+                        pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
+                    else{
+                        int nbSpawns = main.getArene(args[1]).getSpawns().size();
+                        main.getArene(args[1]).removeSpawns(nbSpawns);
+                        main.areneConfig.set("arenes."+args[1]+".spawns."+(nbSpawns), null);
+                        main.saveArena();
+                        pls.sendMessage("Le dernier spawn a été retiré");
+                    }
+                    return true;
+                }
+                //endregion
+                //region removeSpawnGold
+                else if(args[0].equalsIgnoreCase("removeSpawnGold")){
+                    if (args.length != 2)
+                        pls.sendMessage("Erreur: La commande est: /murderEditor removeSpawnGold <name>");
+                    else if(!arenaExists(args[1]) ){
+                        pls.sendMessage("Aucune arène ne porte ce nom");
+                    }
+                    else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
+                        pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
+                    else{
+                        int nbSpawnsGold = main.getArene(args[1]).getSpawns().size();
+                        main.getArene(args[1]).removeSpawnsGolds(nbSpawnsGold);
+                        main.areneConfig.set("arenes."+args[1]+".spawnsGold."+(nbSpawnsGold), null);
+                        main.saveArena();
+                        pls.sendMessage("Le dernier Spawn Gold a été retiré");
+                    }
+                    return true;
+                }
+                //endregion
+                //region save
+                else if(args[0].equalsIgnoreCase("save")){
+                    if(args.length != 2)
+                        pls.sendMessage("Erreur: La commande est: /murderEditor save <name>");
+                    else if(!arenaExists(args[1])){
+                        pls.sendMessage("Aucune arène ne porte ce nom");
+                    }
+                    else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
+                        pls.sendMessage("Cette arrene est déjà save");
+                    else if (main.getArene(args[1]).getSpawns().size()>=4 && main.getArene(args[1]).getLobby() != null){
+                        main.getArene(args[1]).setState("WAITTING");
+                        main.areneConfig.set("arenes."+args[1]+".statue", "WAITTING");
+                        main.saveArena();
+                        pls.sendMessage("Arène enregistré");
+                    }
+                    else{
+                        pls.sendMessage("Erreur: Vous n'avez pas remplie toutes les conditions pour enregistrer une arène");
+                    }
+                    return true;
+                }
+                //endregion
+                //region setEditor
+                else if(args[0].equalsIgnoreCase("setEditor")){
+                    if(args.length != 2)
+                        pls.sendMessage("Erreur: La commande est: /murderEditor setEditor <name>");
+                    else if(!arenaExists(args[1])){
+                        pls.sendMessage("Aucune arène ne porte ce nom");
+                    }
+                    else if(main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
+                        pls.sendMessage("Cette arrene n'est pas encore save");
+                    else{
+                        main.getArene(args[1]).setState("CREATE");
+                        main.areneConfig.set("arenes."+args[1]+".statue", "CREATE");
+                        main.saveArena();
+                        pls.sendMessage("Arène passé en mode editeur");
                     }
                     return true;
                 }
@@ -121,10 +227,7 @@ public class CommandMurderEditor implements CommandExecutor{
                             message+="§rSpawns: §4"+temp.getSpawns().size()+"/12\n";
                         else
                             message+="§rSpawns: §a"+temp.getSpawns().size()+"/12\n";
-                        if(temp.getSpawnsGolds().size() < 4)
-                            message+="§rSpawns Gold: §4"+temp.getSpawnsGolds().size()+"/12\n";
-                        else
-                            message+="§rSpawns Gold: §a"+temp.getSpawnsGolds().size()+"/12\n";
+                        message+="§rSpawns Gold: §a"+temp.getSpawnsGolds().size()+"\n";
                         if(temp.getState().equalsIgnoreCase("CREATE"))
                             message+="§rStatue: §4Non Finie";
                         else
@@ -141,7 +244,7 @@ public class CommandMurderEditor implements CommandExecutor{
                                 String message = "Liste des arènes: \n";
                                 List<MArena> arenas = new ArrayList<>();
                                 for (int x =0; x < main.listArene.size(); x++){
-                                    message+= main.listArene.get(x).getName()+"\n";
+                                    message += main.listArene.get(x).getName()+"\n";
                                 }
                                 pls.sendMessage(message);
 

@@ -36,7 +36,7 @@ public class MArena
     }
 
 
-    //endregio
+    //endregion
 
     //region getters
     public String getName(){return name;}
@@ -65,12 +65,10 @@ public class MArena
     {
         spawns.add(spawn);
     }
-    public void removeSpawns(Location spawn){
-        spawns.remove(spawn);
-    }
+    public void removeSpawns(int spawn){spawns.remove(spawn);}
 
     public void addSpawnsGolds(Location spawnsGolds) {this.spawnsGolds.add(spawnsGolds);}
-    public void removeSpawnsGolds(Location spawnsGolds){this.spawnsGolds.remove(spawnsGolds);}
+    public void removeSpawnsGolds(int spawnsGolds){this.spawnsGolds.remove(spawnsGolds);}
     //endregion
 
 

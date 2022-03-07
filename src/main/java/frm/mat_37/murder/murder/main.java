@@ -74,23 +74,22 @@ public class main extends JavaPlugin {
     {
         for (String name : areneConfig.getConfigurationSection("arenes.").getKeys(false))
         {
-            String test = "La solution est: "+ areneConfig.getString("arenes."+name+".lobby");
-            System.out.println(test);
             Location lobbyTemp = convertLocation(areneConfig.getString("arenes."+name+".lobby"));
 
             String stateTemp = (String) areneConfig.get("arenes."+name+".statue");
             List<Location> spawnsTemp = new ArrayList<>();
             List<Location> spawnsGoldsTemp = new ArrayList<>();
-            if(areneConfig.getConfigurationSection("arenes.spawns") != null){
-                for (String spawn : areneConfig.getConfigurationSection("arenes.spawns.").getKeys(false))
+            if(areneConfig.getConfigurationSection("arenes."+name+".spawns") != null){
+                for (String spawn : areneConfig.getConfigurationSection("arenes."+name+".spawns").getKeys(false))
                 {
-                    spawnsTemp.add(convertLocation((String) areneConfig.get("arenes.spawns."+spawn)));
+                    spawnsTemp.add(convertLocation((String) areneConfig.get("arenes."+name+".spawns."+spawn)));
+
                 }
             }
-            if(areneConfig.getConfigurationSection("arenes.spawnsGolds") != null){
-                for (String spawnGold : areneConfig.getConfigurationSection("arenes.spawnsGolds.").getKeys(false))
+            if(areneConfig.getConfigurationSection("arenes."+name+".spawnsGolds") != null){
+                for (String spawnGold : areneConfig.getConfigurationSection("arenes."+name+".spawnsGolds").getKeys(false))
                 {
-                    spawnsGoldsTemp.add(convertLocation((String) areneConfig.get("arenes.spawnsGolds."+spawnGold)));
+                    spawnsGoldsTemp.add(convertLocation((String) areneConfig.get("arenes."+name+".spawnsGolds."+spawnGold)));
                 }
             }
             MArena temp = new MArena(name,stateTemp,spawnsTemp,spawnsGoldsTemp,lobbyTemp);

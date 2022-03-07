@@ -20,9 +20,12 @@ public class CommandMurder implements CommandExecutor {
                 Player pls = ((Player) sender).getPlayer();
 
                 if (args.length == 0) {
-                    pls.sendMessage("Erreur: Liste des commands:");
-                    pls.sendMessage("/murderEditor join <name>");
-                    pls.sendMessage("/murderEditor leave <name>");
+                    String message = "Murder: Liste des commands:\n";
+                    if(pls.hasPermission("murder.admin"))
+                        message+="/murderEditor\n";
+                    message+="/murder join <name>\n";
+                    message+="/murder leave <name>\n";
+                    pls.sendMessage(message);
                     return true;
                 }
                 //region join
