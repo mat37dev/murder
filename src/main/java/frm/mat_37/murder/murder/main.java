@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.Console;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,20 +74,24 @@ public class main extends JavaPlugin {
     {
         for (String name : areneConfig.getConfigurationSection("arenes.").getKeys(false))
         {
-            System.out.println("La solution est: "+ areneConfig.get("arenes."+name+".lobby"));
-            Location lobbyTemp = convertLocation((String) areneConfig.get("arenes."+name+".lobby"));
+            String test = "La solution est: "+ areneConfig.getString("arenes."+name+".lobby");
+            System.out.println(test);
+            Location lobbyTemp = convertLocation(areneConfig.getString("arenes."+name+".lobby"));
 
             String stateTemp = (String) areneConfig.get("arenes."+name+".statue");
             List<Location> spawnsTemp = new ArrayList<>();
             List<Location> spawnsGoldsTemp = new ArrayList<>();
-            for (String spawn : areneConfig.getConfigurationSection("arenes.spawns").getKeys(false))
-            {
-                spawnsTemp.add(convertLocation((String) areneConfig.get("arenes.spawns."+spawn)));
+            if(areneConfig.getConfigurationSection("arenes.spawns") != null){
+                for (String spawn : areneConfig.getConfigurationSection("arenes.spawns.").getKeys(false))
+                {
+                    spawnsTemp.add(convertLocation((String) areneConfig.get("arenes.spawns."+spawn)));
+                }
             }
-            List<Location> spawnsGoldTemp = new ArrayList<>();
-            for (String spawnGold : areneConfig.getConfigurationSection("arenes.spawnsGolds").getKeys(false))
-            {
-                spawnsGoldsTemp.add(convertLocation((String) areneConfig.get("arenes.spawnsGolds."+spawnGold)));
+            if(areneConfig.getConfigurationSection("arenes.spawnsGolds") != null){
+                for (String spawnGold : areneConfig.getConfigurationSection("arenes.spawnsGolds.").getKeys(false))
+                {
+                    spawnsGoldsTemp.add(convertLocation((String) areneConfig.get("arenes.spawnsGolds."+spawnGold)));
+                }
             }
             MArena temp = new MArena(name,stateTemp,spawnsTemp,spawnsGoldsTemp,lobbyTemp);
             listArene.add(temp);
@@ -109,7 +113,7 @@ public class main extends JavaPlugin {
     {
         Location result = null;
 
-        if(locationString != null){
+        if(!locationString.equalsIgnoreCase("")){
             String[] parsedLoc = locationString.split(";");
             String world = parsedLoc[0];
             double x = Double.valueOf(parsedLoc[1]);

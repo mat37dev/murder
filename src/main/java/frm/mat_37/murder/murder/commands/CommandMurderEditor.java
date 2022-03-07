@@ -23,13 +23,16 @@ public class CommandMurderEditor implements CommandExecutor{
                     pls.sendMessage("Erreur: Liste des commands:");
                     pls.sendMessage("/murderEditor create <name>");
                     pls.sendMessage("/murderEditor remove <name>");
+                    pls.sendMessage("/murderEditor setLobby <name>");
+                    pls.sendMessage("/murderEditor info <name>");
+                    pls.sendMessage("/murderEditor list");
                     return true;
                 }
                 //region create
                 else if(args[0].equalsIgnoreCase("create")){
                     if(args.length != 2)
                         pls.sendMessage("Erreur: La commande est: /murderEditor create <name>");
-                    else if(main.getArene(args[1]) != null){
+                    else if(arenaExists(args[1])){
                         pls.sendMessage("Une arène avec ce nom existe déjà");
                     }
                     else{
@@ -37,7 +40,7 @@ public class CommandMurderEditor implements CommandExecutor{
                         pls.sendMessage(args[1]+ " a été créé avec succés");
                         main.areneConfig.createSection("arenes."+args[1]);
                         main.areneConfig.set("arenes."+args[1]+".statue", "CREATE");
-                        main.areneConfig.createSection("arenes."+args[1]+".lobby");
+                        main.areneConfig.set("arenes."+args[1]+".lobby","");
                         main.areneConfig.createSection("arenes."+args[1]+".spawns");
                         main.areneConfig.createSection("arenes."+args[1]+".spawnsGold");
                         main.saveArena();
@@ -61,11 +64,49 @@ public class CommandMurderEditor implements CommandExecutor{
                     return true;
                 }
                 //endregion
+                //region setLobby
+                else if(args[0].equalsIgnoreCase("setLobby")){
+                    if (args.length != 2)
+                        pls.sendMessage("Erreur: La commande est: /murderEditor setLobby <name>");
+                    else if(!arenaExists(args[1]) ){
+                        pls.sendMessage("Aucune arène ne porte ce nom");
+                    }
+                    else{
+                        main.getArene(args[1]).setLobby(pls.getLocation());
+                        main.areneConfig.set("arenes."+args[1]+".lobby", pls.getWorld().getName()+";"+pls.getLocation().getX()+";"+pls.getLocation().getY()+";"+pls.getLocation().getZ());
+                        pls.sendMessage("Le lobby à bien été set");
+                        main.saveArena();
+                    }
+                    return true;
+                }
+                //endregion
+                //region addSpawn
+                else if(args[0].equalsIgnoreCase("addSpawn")){
+                    if (args.length != 2)
+                        pls.sendMessage("Erreur: La commande est: /murderEditor addSpawn <name>");
+                    else if(!arenaExists(args[1]) ){
+                        pls.sendMessage("Aucune arène ne porte ce nom");
+                    }
+                    else{
+                        int nbSpawns = main.getArene(args[1]).getSpawns().size();
+                        if(nbSpawns == 12)
+                            pls.sendMessage("Nombre de spawn max atteind");
+                        else{
+                            main.getArene(args[1]).addSpawns(pls.getLocation());
+                            main.areneConfig.set("arenes."+args[1]+".spawns."+(nbSpawns+1), pls.getWorld().getName()+";"+pls.getLocation().getX()+";"+pls.getLocation().getY()+";"+pls.getLocation().getZ());
+                            pls.sendMessage("Un spawn a été ajouté");
+                            main.saveArena();
+                        }
+                    }
+                    return true;
+                }
+                //endregion
+                //region info
                 else if(args[0].equalsIgnoreCase("info"))
                 {
                     if (args.length != 2)
                         pls.sendMessage("Erreur: La commande est: /murderEditor info <name>");
-                    else if(main.getArene(args[1]) == null ){
+                    else if(!arenaExists(args[1]) ){
                         pls.sendMessage("Aucune arène ne porte ce nom");
                     }
                     else
@@ -75,7 +116,7 @@ public class CommandMurderEditor implements CommandExecutor{
                         if(temp.getLobby() == null)
                             message += "Lobby §40/1\n";
                         else
-                            message += "Lobby §a0/1\n";
+                            message += "Lobby §a1/1\n";
                         if(temp.getSpawns().size() < 4)
                             message+="§rSpawns: §4"+temp.getSpawns().size()+"/12\n";
                         else
@@ -92,6 +133,8 @@ public class CommandMurderEditor implements CommandExecutor{
                     }
                     return true;
                 }
+                //endregion
+                //region list
                 else if(args[0].equalsIgnoreCase("list")) {
                         if(args.length == 1) {
                             if(main.listArene.size() != 0) {
@@ -109,8 +152,17 @@ public class CommandMurderEditor implements CommandExecutor{
                             pls.sendMessage("Erreur: La commande est => /murderEditor list");
                         }
                 }
+                //endregion
             }
         }
         return false;
     }
+    //region methods
+    private boolean arenaExists (String name){
+        Boolean result = false;
+        if(main.getArene(name) != null)
+            result = true;
+        return result;
+    }
+    //endregion
 }
