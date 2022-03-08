@@ -8,10 +8,13 @@ import org.bukkit.entity.Player;
 
 public class CommandMurder implements CommandExecutor {
     private main main;
+    private GameManager gameManager;
 
-    public CommandMurder(main main) {
+    public CommandMurder(main main,GameManager gameManager) {
         this.main = main;
+        this.gameManager = gameManager;
     }
+
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -19,12 +22,12 @@ public class CommandMurder implements CommandExecutor {
             if (command.getName().equalsIgnoreCase("murder")) {
                 Player pls = ((Player) sender).getPlayer();
 
-                if (args.length == 0) {
+                if (args.length == 0||args[0].equalsIgnoreCase("help")) {
                     String message = "Murder: Liste des commands:\n";
                     if(pls.hasPermission("murder.admin"))
                         message+="/murderEditor\n";
                     message+="/murder join <name>\n";
-                    message+="/murder leave <name>\n";
+                    message+="/murder leave\n";
                     pls.sendMessage(message);
                     return true;
                 }
@@ -32,17 +35,17 @@ public class CommandMurder implements CommandExecutor {
                 else if (args[0].equalsIgnoreCase("join")) {
                     if (args.length != 2)
                         pls.sendMessage("Erreur: La commande est: /murder join <name>");
-                    else if(!main.joueurInArene.containsKey(pls)){
+                    else if(!arenaExists(args[1]))
+                        pls.sendMessage("§f[§6Murder§f] l'arène §4"+args[1]+" §fn'existe pas !");
+                    else if(main.joueurInArene.containsKey(pls)){
                         pls.sendMessage("Vous êtes déjà dans une arène.");
                     }
-                    else if(main.listArene.contains(main.getArene(args[1]))){
-                        //code pour join
-                        main.getArene(args[1]).joinArene(pls);
-                        main.joueurInArene.put(pls, main.getArene(args[1]));
-                        pls.sendMessage("[Murder] Vous avez rejoint l'arène: "+ args[1]);
-                        }
-                    else{
-                        pls.sendMessage("§f[§6Murder§f] l'arène §4"+args[1]+" §fn'existe pas !");
+                    else if(!main.getArene(args[1]).getState().equalsIgnoreCase("WAITTING")){
+                        pls.sendMessage("Cette arène n'est pas disponible");
+                    }
+                    else {
+                        //on appel la fonction join du GameManager
+                        gameManager.playerJoin(pls,main.getArene(args[1]));
                     }
                     return true;
                 }
@@ -51,22 +54,28 @@ public class CommandMurder implements CommandExecutor {
                 else if (args[0].equalsIgnoreCase("leave")) {
                     if (args.length != 1)
                         pls.sendMessage("Erreur: La commande est: /murder leave");
+                    else if(!main.joueurInArene.containsKey(pls))
+                        pls.sendMessage("Erreur: vous n'etes pas dans une arene");
+                    else if(main.joueurInArene.get(pls) != null) {
+                        gameManager.pLayerLeave(pls,main.joueurInArene.get(pls));
+                    }
                     else {
-                        if (main.joueurInArene.get(pls) != null) {
-                            pls.sendMessage("[Murder] Vous avez quitté l'arène" + main.joueurInArene.get(pls).getName());
-                            main.joueurInArene.get(pls).leaveArene(pls);
-                            main.joueurInArene.remove(pls);
-                        } else {
-                            pls.sendMessage("[Murder] Tu n'es pas dans une arrène");
-                        }
+                        pls.sendMessage("[Murder] Tu n'es pas dans une arrène");
                     }
                     return true;
                 }
                 //endregion
-
             }
-
         }
         return false;
     }
+
+    //region methods
+    private boolean arenaExists (String name){
+        Boolean result = false;
+        if(main.getArene(name) != null)
+            result = true;
+        return result;
+    }
+    //endregion
 }

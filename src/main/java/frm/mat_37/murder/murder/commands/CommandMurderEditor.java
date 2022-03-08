@@ -19,20 +19,22 @@ public class CommandMurderEditor implements CommandExecutor{
 
         if(sender instanceof Player) {
             if(command.getName().equalsIgnoreCase("murdereditor")) {
-                if(args.length == 0) {
-                    pls.sendMessage("Erreur: Liste des commands:");
-                    pls.sendMessage("/murderEditor create <name>");
-                    pls.sendMessage("/murderEditor remove <name>");
-                    pls.sendMessage("/murderEditor setLobby <name>");
-                    pls.sendMessage("/murderEditor addSpawn <name>");
-                    pls.sendMessage("/murderEditor addSpawnGold <name>");
-                    pls.sendMessage("/murderEditor removeSpawn <name>");
-                    pls.sendMessage("/murderEditor removeSpawnGold <name>");
-                    pls.sendMessage("/murderEditor save <name>");
-                    pls.sendMessage("/murderEditor setEditor <name>");
-                    pls.sendMessage("/murderEditor info <name>");
-                    pls.sendMessage("/murderEditor list");
-
+                if(args.length == 0 || args[0].equalsIgnoreCase("help")) {
+                    String message = "Murder: Liste des commands:\n";
+                    message +="/murderEditor create <name>\n";
+                    message +="/murderEditor remove <name>\n";
+                    message +="/murderEditor setLobby <name>\n";
+                    message +="/murderEditor setSpectatorSpawn <name>\n";
+                    message +="/murderEditor addSpawn <name>\n";
+                    message +="/murderEditor addSpawnGold <name>\n";
+                    message +="/murderEditor removeSpawn <name>";
+                    message +="/murderEditor removeSpawnGold <name>\n";
+                    message +="/murderEditor save <name>\n";
+                    message +="/murderEditor setEditor <name>\n";
+                    message +="/murderEditor info <name>\n";
+                    message +="/murderEditor list\n";
+                    message +="/murderEditor setHub";
+                    pls.sendMessage(message);
                     return true;
                 }
                 //region create
@@ -48,6 +50,7 @@ public class CommandMurderEditor implements CommandExecutor{
                         main.areneConfig.createSection("arenes."+args[1]);
                         main.areneConfig.set("arenes."+args[1]+".statue", "CREATE");
                         main.areneConfig.set("arenes."+args[1]+".lobby","");
+                        main.areneConfig.set("arenes."+args[1]+".spectatorSpawn","");
                         main.areneConfig.createSection("arenes."+args[1]+".spawns");
                         main.areneConfig.createSection("arenes."+args[1]+".spawnsGold");
                         main.saveArena();
@@ -84,6 +87,24 @@ public class CommandMurderEditor implements CommandExecutor{
                         main.getArene(args[1]).setLobby(pls.getLocation());
                         main.areneConfig.set("arenes."+args[1]+".lobby", pls.getWorld().getName()+","+pls.getLocation().getX()+","+pls.getLocation().getY()+","+pls.getLocation().getZ());
                         pls.sendMessage("Le lobby à bien été set");
+                        main.saveArena();
+                    }
+                    return true;
+                }
+                //endregion
+                //region setSpectatorSpawn
+                else if(args[0].equalsIgnoreCase("setSpectatorSpawn")){
+                    if (args.length != 2)
+                        pls.sendMessage("Erreur: La commande est: /murderEditor setSpectatorSpawn <name>");
+                    else if(!arenaExists(args[1]) ){
+                        pls.sendMessage("Aucune arène ne porte ce nom");
+                    }
+                    else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
+                        pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
+                    else{
+                        main.getArene(args[1]).setSpectatorSpawn(pls.getLocation());
+                        main.areneConfig.set("arenes."+args[1]+".spectatorSpawn", pls.getWorld().getName()+","+pls.getLocation().getX()+","+pls.getLocation().getY()+","+pls.getLocation().getZ());
+                        pls.sendMessage("Le spawn des Spectateurs à bien été set");
                         main.saveArena();
                     }
                     return true;
@@ -182,7 +203,7 @@ public class CommandMurderEditor implements CommandExecutor{
                     }
                     else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
                         pls.sendMessage("Cette arrene est déjà save");
-                    else if (main.getArene(args[1]).getSpawns().size()>=4 && main.getArene(args[1]).getLobby() != null){
+                    else if (main.getArene(args[1]).getSpawns().size()>=4 && main.getArene(args[1]).getLobby() != null&& main.getArene(args[1]).getSpectatorSpawn() != null){
                         main.getArene(args[1]).setState("WAITTING");
                         main.areneConfig.set("arenes."+args[1]+".statue", "WAITTING");
                         main.saveArena();
@@ -228,6 +249,10 @@ public class CommandMurderEditor implements CommandExecutor{
                             message += "Lobby §40/1\n";
                         else
                             message += "Lobby §a1/1\n";
+                        if(temp.getSpectatorSpawn() == null)
+                            message += "Spectator Spawn §40/1\n";
+                        else
+                            message += "Spectator Spawn §a1/1\n";
                         if(temp.getSpawns().size() < 4)
                             message+="§rSpawns: §4"+temp.getSpawns().size()+"/12\n";
                         else
@@ -259,6 +284,19 @@ public class CommandMurderEditor implements CommandExecutor{
                         }else{
                             pls.sendMessage("Erreur: La commande est => /murderEditor list");
                         }
+                }
+                //endregion
+                //region setHub
+                else if(args[0].equalsIgnoreCase("setHub")) {
+                    if(args.length == 1) {
+                        main.hub = pls.getLocation();
+                        main.areneConfig.set("hub", pls.getWorld().getName()+","+pls.getLocation().getX()+","+pls.getLocation().getY()+","+pls.getLocation().getZ());
+                        pls.sendMessage("Vous venez de définir le hub");
+                        main.saveArena();
+                    }
+                    else{
+                        pls.sendMessage("Erreur: La commande est => /murderEditor setHub");
+                    }
                 }
                 //endregion
             }

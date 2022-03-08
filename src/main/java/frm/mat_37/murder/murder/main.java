@@ -1,11 +1,13 @@
 package frm.mat_37.murder.murder;
 import frm.mat_37.murder.murder.commands.CommandMurder;
 import frm.mat_37.murder.murder.commands.CommandMurderEditor;
+import frm.mat_37.murder.murder.gameplay.GameManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,7 +24,9 @@ public class main extends JavaPlugin {
     public List<MArena> listArene;
     //dico qui permet de retrouver une arene en fonction du joueur
     public Map<Player, MArena> joueurInArene;
-    
+
+    //hub
+    public Location hub;
     
     //variable arene.yml
     private File areneFile;
@@ -32,13 +36,14 @@ public class main extends JavaPlugin {
     @Override
     public void onEnable() {
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new mListener(this), this);
+        pm.registerEvents(new GameManager(this),this);
 
         getCommand("murderEditor").setExecutor((CommandExecutor) new CommandMurderEditor(this));
-        getCommand("murder").setExecutor((CommandExecutor) new CommandMurder(this));
+
+        GameManager GameManager = new GameManager(this);
+        getCommand("murder").setExecutor((CommandExecutor) new CommandMurder(this, GameManager));
 
         checkDataArena();
-
 
         //on récupère la liste d'arrene
         listArene = new ArrayList<>();
@@ -64,6 +69,7 @@ public class main extends JavaPlugin {
             }
             areneConfig = YamlConfiguration.loadConfiguration(areneFile);
             areneConfig.createSection("arenes");
+            areneConfig.set("hub","");
             saveArena();
         } else {
             areneConfig = YamlConfiguration.loadConfiguration(areneFile);
@@ -72,9 +78,15 @@ public class main extends JavaPlugin {
 
     public void loadArena()
     {
+        Location hubTemp = convertLocation(areneConfig.getString("hub"));
+        if(hubTemp == null)
+            hubTemp = new Location(Bukkit.getWorld("world"), 0, 0, 0);
+        hub = hubTemp;
+        saveArena();
         for (String name : areneConfig.getConfigurationSection("arenes.").getKeys(false))
         {
             Location lobbyTemp = convertLocation(areneConfig.getString("arenes."+name+".lobby"));
+            Location spectatorSpawnTemp = convertLocation(areneConfig.getString("arenes."+name+".lobby"));
 
             String stateTemp = (String) areneConfig.get("arenes."+name+".statue");
             List<Location> spawnsTemp = new ArrayList<>();
@@ -92,7 +104,7 @@ public class main extends JavaPlugin {
                     spawnsGoldsTemp.add(convertLocation((String) areneConfig.get("arenes."+name+".spawnsGold."+spawnGold)));
                 }
             }
-            MArena temp = new MArena(name,stateTemp,spawnsTemp,spawnsGoldsTemp,lobbyTemp);
+            MArena temp = new MArena(this,name,stateTemp,spawnsTemp,spawnsGoldsTemp,lobbyTemp,spectatorSpawnTemp);
             listArene.add(temp);
         }
     }
@@ -125,7 +137,7 @@ public class main extends JavaPlugin {
     //endregion
     //region Arene
     public void addArene(String name){
-        MArena temp = new MArena(name);
+        MArena temp = new MArena(this,name);
         listArene.add(temp);
     }
 
