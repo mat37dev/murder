@@ -1,13 +1,15 @@
 package frm.mat_37.murder.murder;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import frm.mat_37.murder.murder.Runnable.Timer;
+
+
+import frm.mat_37.murder.murder.runnable.Timer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class MArena
 {
@@ -23,7 +25,7 @@ public class MArena
 
 
     //region constructor
-    public MArena(main main, String name) {
+    public MArena(Main main, String name) {
         this.name = name;
         listPlayers = new ArrayList<>();
         state = "CREATE";
@@ -34,7 +36,7 @@ public class MArena
         this.main = main;
     }
 
-    public MArena(main main, String name, String state, List<Location> spawns,List<Location> spawnsGolds, Location lobby, Location spectatorSpawn)
+    public MArena(Main main, String name, String state, List<Location> spawns, List<Location> spawnsGolds, Location lobby, Location spectatorSpawn)
     {
         this.name = name;
         listPlayers = new ArrayList<>();
@@ -89,7 +91,7 @@ public class MArena
 
     public void timerStart()
     {
-        timer  =  new Timer(this);
+        timer  =  new Timer(this, main);
 
         timer.runTaskTimer((Plugin) main, 0, 20);
     }

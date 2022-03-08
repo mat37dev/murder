@@ -1,15 +1,18 @@
-package frm.mat_37.murder.murder.Runnable;
+package frm.mat_37.murder.murder.runnable;
 
 import frm.mat_37.murder.murder.MArena;
+import frm.mat_37.murder.murder.Main;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Timer extends BukkitRunnable {
     MArena arene;
+    Main main;
     int timer;
-    public Timer(MArena arene) {
+    public Timer(MArena arene, Main main) {
         this.arene = arene;
+        this.main = main;
         timer = 20;
     }
 
@@ -30,6 +33,7 @@ public class Timer extends BukkitRunnable {
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 20f, 12);
             }
             arene.setState("PLAYING");
+            main.saveArena();
             cancel();
         }
         timer--;

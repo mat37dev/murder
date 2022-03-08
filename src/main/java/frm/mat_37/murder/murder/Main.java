@@ -1,14 +1,13 @@
 package frm.mat_37.murder.murder;
 import frm.mat_37.murder.murder.commands.CommandMurder;
 import frm.mat_37.murder.murder.commands.CommandMurderEditor;
-import frm.mat_37.murder.murder.gameplay.GameManager;
+import frm.mat_37.murder.murder.gameManager.EditorManager;
+import frm.mat_37.murder.murder.gameManager.GameManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -19,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class main extends JavaPlugin {
+public class Main extends JavaPlugin {
     //varible qui stocke les arenes
     public List<MArena> listArene;
     //dico qui permet de retrouver une arene en fonction du joueur
@@ -32,16 +31,20 @@ public class main extends JavaPlugin {
     private File areneFile;
     public YamlConfiguration areneConfig;
 
+    private GameManager gameManager;
+    private EditorManager editorManager;
 
     @Override
     public void onEnable() {
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new GameManager(this),this);
+        gameManager = new GameManager(this);
+        editorManager = new EditorManager(this);
+        //PluginManager pm = getServer().getPluginManager();
+        //pm.registerEvents(gameManager,this);
 
-        getCommand("murderEditor").setExecutor((CommandExecutor) new CommandMurderEditor(this));
+        getCommand("murderEditor").setExecutor((CommandExecutor) new CommandMurderEditor(this, editorManager));
 
-        GameManager GameManager = new GameManager(this);
-        getCommand("murder").setExecutor((CommandExecutor) new CommandMurder(this, GameManager));
+
+        getCommand("murder").setExecutor((CommandExecutor) new CommandMurder(this, gameManager));
 
         checkDataArena();
 

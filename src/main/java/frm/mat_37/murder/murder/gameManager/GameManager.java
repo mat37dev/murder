@@ -1,20 +1,17 @@
-package frm.mat_37.murder.murder.gameplay;
+package frm.mat_37.murder.murder.gameManager;
 import frm.mat_37.murder.murder.MArena;
-import frm.mat_37.murder.murder.main;
-import org.bukkit.Sound;
+import frm.mat_37.murder.murder.Main;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 
-
-public class GameManager implements Listener {
+public class GameManager {
 
     private int playerMin;
     private int playerMax;
 
 
-    private main main;
-    public GameManager(main main) {
+    private Main main;
+    public GameManager(Main main) {
         this.main= main;
         playerMin = 1;
         playerMax = 1;

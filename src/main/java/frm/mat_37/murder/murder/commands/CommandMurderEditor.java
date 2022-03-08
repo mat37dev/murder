@@ -1,16 +1,19 @@
 package frm.mat_37.murder.murder.commands;
 
 import frm.mat_37.murder.murder.MArena;
-import frm.mat_37.murder.murder.main;
+import frm.mat_37.murder.murder.Main;
+import frm.mat_37.murder.murder.gameManager.EditorManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandMurderEditor implements CommandExecutor{
-    private main main;
-    public CommandMurderEditor(main main) {
+    private Main main;
+    private EditorManager editorManager;
+    public CommandMurderEditor(Main main, EditorManager editorManager) {
     this.main = main;
+    this.editorManager = editorManager;
     }
 
     @Override
@@ -45,15 +48,7 @@ public class CommandMurderEditor implements CommandExecutor{
                         pls.sendMessage("Une arène avec ce nom existe déjà");
                     }
                     else{
-                        main.addArene(args[1]);
-                        pls.sendMessage(args[1]+ " a été créé avec succés");
-                        main.areneConfig.createSection("arenes."+args[1]);
-                        main.areneConfig.set("arenes."+args[1]+".statue", "CREATE");
-                        main.areneConfig.set("arenes."+args[1]+".lobby","");
-                        main.areneConfig.set("arenes."+args[1]+".spectatorSpawn","");
-                        main.areneConfig.createSection("arenes."+args[1]+".spawns");
-                        main.areneConfig.createSection("arenes."+args[1]+".spawnsGold");
-                        main.saveArena();
+                        editorManager.createArene(pls, args[1]);
                     }
                     return true;
                 }
@@ -66,10 +61,7 @@ public class CommandMurderEditor implements CommandExecutor{
                         pls.sendMessage("Aucune arène ne porte ce nom");
                     }
                     else{
-                        main.removeArena(args[1]);
-                        pls.sendMessage(args[1] + " a été supprimé avec succés");
-                        main.areneConfig.set("arenes."+args[1], null);
-                        main.saveArena();
+                        editorManager.removeArene(pls,args[1]);
                     }
                     return true;
                 }
@@ -84,10 +76,7 @@ public class CommandMurderEditor implements CommandExecutor{
                     else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
                         pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
                     else{
-                        main.getArene(args[1]).setLobby(pls.getLocation());
-                        main.areneConfig.set("arenes."+args[1]+".lobby", pls.getWorld().getName()+","+pls.getLocation().getX()+","+pls.getLocation().getY()+","+pls.getLocation().getZ());
-                        pls.sendMessage("Le lobby à bien été set");
-                        main.saveArena();
+                        editorManager.setLobby(pls, args[1]);
                     }
                     return true;
                 }
@@ -102,10 +91,7 @@ public class CommandMurderEditor implements CommandExecutor{
                     else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
                         pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
                     else{
-                        main.getArene(args[1]).setSpectatorSpawn(pls.getLocation());
-                        main.areneConfig.set("arenes."+args[1]+".spectatorSpawn", pls.getWorld().getName()+","+pls.getLocation().getX()+","+pls.getLocation().getY()+","+pls.getLocation().getZ());
-                        pls.sendMessage("Le spawn des Spectateurs à bien été set");
-                        main.saveArena();
+                        editorManager.setSpectatorSpawn(pls,args[1]);
                     }
                     return true;
                 }
@@ -120,15 +106,7 @@ public class CommandMurderEditor implements CommandExecutor{
                     else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
                         pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
                     else{
-                        int nbSpawns = main.getArene(args[1]).getSpawns().size();
-                        if(nbSpawns == 12)
-                            pls.sendMessage("Nombre de spawn max atteind");
-                        else{
-                            main.getArene(args[1]).addSpawns(pls.getLocation());
-                            main.areneConfig.set("arenes."+args[1]+".spawns."+(nbSpawns+1), pls.getWorld().getName()+","+pls.getLocation().getX()+","+pls.getLocation().getY()+","+pls.getLocation().getZ());
-                            pls.sendMessage("Un spawn a été ajouté");
-                            main.saveArena();
-                        }
+                        editorManager.addSpawn(pls, args[1]);
                     }
                     return true;
                 }
@@ -143,15 +121,7 @@ public class CommandMurderEditor implements CommandExecutor{
                     else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
                         pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
                     else{
-                        int nbSpawnsGolds = main.getArene(args[1]).getSpawnsGolds().size();
-                        if(nbSpawnsGolds == 24)
-                            pls.sendMessage("Nombre de Spawn Gold max atteind");
-                        else{
-                            main.getArene(args[1]).addSpawnsGolds(pls.getLocation());
-                            main.areneConfig.set("arenes."+args[1]+".spawnsGold."+(nbSpawnsGolds+1), pls.getWorld().getName()+","+pls.getLocation().getX()+","+pls.getLocation().getY()+","+pls.getLocation().getZ());
-                            pls.sendMessage("Un Spawn Gold a été ajouté");
-                            main.saveArena();
-                        }
+                        editorManager.addSpawnGold(pls, args[1]);
                     }
                     return true;
                 }
@@ -165,12 +135,10 @@ public class CommandMurderEditor implements CommandExecutor{
                     }
                     else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
                         pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
+                    else if(main.getArene(args[1]).getSpawns().size() == 0)
+                        pls.sendMessage("Erreur: Vous n'avez pas encore ajouté de spawn");
                     else{
-                        int nbSpawns = main.getArene(args[1]).getSpawns().size();
-                        main.getArene(args[1]).removeSpawns(nbSpawns);
-                        main.areneConfig.set("arenes."+args[1]+".spawns."+(nbSpawns), null);
-                        main.saveArena();
-                        pls.sendMessage("Le dernier spawn a été retiré");
+                        editorManager.removeSpawn(pls, args[1]);
                     }
                     return true;
                 }
@@ -184,12 +152,10 @@ public class CommandMurderEditor implements CommandExecutor{
                     }
                     else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
                         pls.sendMessage("Erreur: Vous devez passer votre arrène en mode editeur");
+                    else if(main.getArene(args[1]).getSpawnsGolds().size() == 0)
+                        pls.sendMessage("Erreur: Vous n'avez pas encore ajouté de spawn gold");
                     else{
-                        int nbSpawnsGold = main.getArene(args[1]).getSpawns().size();
-                        main.getArene(args[1]).removeSpawnsGolds(nbSpawnsGold);
-                        main.areneConfig.set("arenes."+args[1]+".spawnsGold."+(nbSpawnsGold), null);
-                        main.saveArena();
-                        pls.sendMessage("Le dernier Spawn Gold a été retiré");
+                        editorManager.removeSpawnGold(pls, args[1]);
                     }
                     return true;
                 }
@@ -204,10 +170,7 @@ public class CommandMurderEditor implements CommandExecutor{
                     else if(!main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
                         pls.sendMessage("Cette arrene est déjà save");
                     else if (main.getArene(args[1]).getSpawns().size()>=4 && main.getArene(args[1]).getLobby() != null&& main.getArene(args[1]).getSpectatorSpawn() != null){
-                        main.getArene(args[1]).setState("WAITTING");
-                        main.areneConfig.set("arenes."+args[1]+".statue", "WAITTING");
-                        main.saveArena();
-                        pls.sendMessage("Arène enregistré");
+                        editorManager.save(pls, args[1]);
                     }
                     else{
                         pls.sendMessage("Erreur: Vous n'avez pas remplie toutes les conditions pour enregistrer une arène");
@@ -225,10 +188,7 @@ public class CommandMurderEditor implements CommandExecutor{
                     else if(main.getArene(args[1]).getState().equalsIgnoreCase("CREATE"))
                         pls.sendMessage("Cette arrene n'est pas encore save");
                     else{
-                        main.getArene(args[1]).setState("CREATE");
-                        main.areneConfig.set("arenes."+args[1]+".statue", "CREATE");
-                        main.saveArena();
-                        pls.sendMessage("Arène passé en mode editeur");
+                        editorManager.setEditor(pls, args[1]);
                     }
                     return true;
                 }
@@ -243,26 +203,7 @@ public class CommandMurderEditor implements CommandExecutor{
                     }
                     else
                     {
-                        MArena temp = main.getArene(args[1]);
-                        String message = temp.getName() + "Information:\n";
-                        if(temp.getLobby() == null)
-                            message += "Lobby §40/1\n";
-                        else
-                            message += "Lobby §a1/1\n";
-                        if(temp.getSpectatorSpawn() == null)
-                            message += "Spectator Spawn §40/1\n";
-                        else
-                            message += "Spectator Spawn §a1/1\n";
-                        if(temp.getSpawns().size() < 4)
-                            message+="§rSpawns: §4"+temp.getSpawns().size()+"/12\n";
-                        else
-                            message+="§rSpawns: §a"+temp.getSpawns().size()+"/12\n";
-                        message+="§rSpawns Gold: §a"+temp.getSpawnsGolds().size()+"\n";
-                        if(temp.getState().equalsIgnoreCase("CREATE"))
-                            message+="§rStatue: §4Non Finie";
-                        else
-                            message+="§rStatue: §aFinie";
-                        pls.sendMessage(message);
+                        editorManager.info(pls, args[1]);
                     }
                     return true;
                 }
@@ -271,28 +212,19 @@ public class CommandMurderEditor implements CommandExecutor{
                 else if(args[0].equalsIgnoreCase("list")) {
                         if(args.length == 1) {
                             if(main.listArene.size() != 0) {
-                                String message = "Liste des arènes: \n";
-                                List<MArena> arenas = new ArrayList<>();
-                                for (int x =0; x < main.listArene.size(); x++){
-                                    message += main.listArene.get(x).getName()+"\n";
-                                }
-                                pls.sendMessage(message);
-
-                            }else{
-                                pls.sendMessage("Erreur: Il n'y a pas d'arene !");
+                                editorManager.list(pls);
                             }
-                        }else{
-                            pls.sendMessage("Erreur: La commande est => /murderEditor list");
+                            else
+                                pls.sendMessage("Erreur: Il n'y a pas d'arene !");
                         }
+                        else
+                            pls.sendMessage("Erreur: La commande est => /murderEditor list");
                 }
                 //endregion
                 //region setHub
                 else if(args[0].equalsIgnoreCase("setHub")) {
                     if(args.length == 1) {
-                        main.hub = pls.getLocation();
-                        main.areneConfig.set("hub", pls.getWorld().getName()+","+pls.getLocation().getX()+","+pls.getLocation().getY()+","+pls.getLocation().getZ());
-                        pls.sendMessage("Vous venez de définir le hub");
-                        main.saveArena();
+                        editorManager.setHub(pls);
                     }
                     else{
                         pls.sendMessage("Erreur: La commande est => /murderEditor setHub");

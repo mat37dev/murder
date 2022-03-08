@@ -7,10 +7,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandMurder implements CommandExecutor {
-    private main main;
+    private Main main;
     private GameManager gameManager;
 
-    public CommandMurder(main main,GameManager gameManager) {
+    public CommandMurder(Main main, GameManager gameManager) {
         this.main = main;
         this.gameManager = gameManager;
     }
