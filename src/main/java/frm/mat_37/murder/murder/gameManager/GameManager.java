@@ -51,6 +51,7 @@ public class GameManager {
             for (Player pls:arene.getListPlayers()) {
                 pls.sendMessage("Partie annulé: pas assez de monde");
             }
+            arene.setTimerStatue(false);
         }
     }
 

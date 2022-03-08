@@ -1,4 +1,4 @@
-package frm.mat_37.murder.murder.runnable;
+package frm.mat_37.murder.murder.Runnable;
 
 import frm.mat_37.murder.murder.MArena;
 import frm.mat_37.murder.murder.Main;
@@ -33,11 +33,11 @@ public class Timer extends BukkitRunnable {
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 20f, 12);
             }
             arene.setState("PLAYING");
+            main.areneConfig.set("arenes."+arene+".statue", "WAITTING");
+            arene.setTimerStatue(false);
             main.saveArena();
             cancel();
         }
         timer--;
     }
-
-
 }

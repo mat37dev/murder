@@ -2,7 +2,7 @@ package frm.mat_37.murder.murder;
 
 
 
-import frm.mat_37.murder.murder.runnable.Timer;
+import frm.mat_37.murder.murder.Runnable.Timer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
