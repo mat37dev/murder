@@ -2,7 +2,9 @@ package frm.mat_37.murder.murder;
 
 
 
+import frm.mat_37.murder.murder.Runnable.TimeWaitWeapon;
 import frm.mat_37.murder.murder.Runnable.Timer;
+import frm.mat_37.murder.murder.gameManager.GameManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -22,6 +24,10 @@ public class MArena
     private Location spectatorSpawn;
     private boolean timerStatue;
     private Timer timer;
+    private TimeWaitWeapon timeWaitWeapon;
+    private Player murder;
+    private Player detective;
+    private List<Player> innocent;
 
 
     //region constructor
@@ -34,6 +40,9 @@ public class MArena
         lobby = null;
         timerStatue = false;
         this.main = main;
+        murder = null;
+        detective = null;
+        innocent = new ArrayList<Player>();
     }
 
     public MArena(Main main, String name, String state, List<Location> spawns, List<Location> spawnsGolds, Location lobby, Location spectatorSpawn)
@@ -47,6 +56,9 @@ public class MArena
         this.spectatorSpawn = spectatorSpawn;
         timerStatue = false;
         this.main = main;
+        murder = null;
+        detective = null;
+        innocent = new ArrayList<Player>();
     }
 
 
@@ -61,6 +73,9 @@ public class MArena
     public Location getSpectatorSpawn() {return spectatorSpawn;}
     public List<Player> getListPlayers(){return listPlayers;}
     public boolean getTimerStatue(){return timerStatue;}
+    public Player getMurder() {return murder;}
+    public Player getDetective() {return detective;}
+    public List<Player> getInnocent() {return innocent;}
     //endregion
 
     //region setters
@@ -69,6 +84,9 @@ public class MArena
     public void setLobby(Location lobby) {this.lobby = lobby;}
     public void setSpectatorSpawn(Location spectatorSpawn) {this.spectatorSpawn = spectatorSpawn;}
     public void setTimerStatue(Boolean timer){this.timerStatue = timer;}
+    public void setMurder(Player murder) {this.murder = murder;}
+    public void setDetective(Player detective) {this.detective = detective;}
+    public void setInnocent(List<Player> innocent) {this.innocent = innocent;}
     //endregion
 
     //region methods
@@ -98,6 +116,13 @@ public class MArena
 
     public void timerStop(){
         timer.cancel();
+    }
+
+    public void timerWaitingWeapon(GameManager gameManager)
+    {
+        timeWaitWeapon  =  new TimeWaitWeapon(gameManager, this);
+
+        timeWaitWeapon.runTaskTimer((Plugin) main, 0, 20);
     }
     //endregion
 

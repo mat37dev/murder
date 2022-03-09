@@ -36,6 +36,7 @@ public class Timer extends BukkitRunnable {
             main.areneConfig.set("arenes."+arene+".statue", "WAITTING");
             arene.setTimerStatue(false);
             main.saveArena();
+            main.getGameManager().preparation(arene);
             cancel();
         }
         timer--;

@@ -4,6 +4,7 @@ import frm.mat_37.murder.murder.commands.CommandMurderEditor;
 import frm.mat_37.murder.murder.gameManager.EditorManager;
 import frm.mat_37.murder.murder.gameManager.GameManager;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -157,6 +158,11 @@ public class Main extends JavaPlugin {
             }
         }
         return temp;
+    }
+    //endregion
+    //region getter GameManager
+    public GameManager getGameManager(){
+        return gameManager;
     }
     //endregion
 }
