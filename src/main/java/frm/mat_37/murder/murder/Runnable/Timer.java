@@ -29,11 +29,11 @@ public class Timer extends BukkitRunnable {
         }
         else if(timer == 0){
             for (Player player:arene.getListPlayers()) {
-                player.sendMessage("§f[§Murder§f]  §bLa partie commence dans: "+timer);
+                player.sendMessage("§f[§eMurder§f]  §bLa partie commence dans: "+timer);
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 20f, 12);
             }
             arene.setState("PLAYING");
-            main.areneConfig.set("arenes."+arene+".statue", "WAITTING");
+            main.areneConfig.set("arenes."+arene.getName()+".statue", "PLAYING");
             arene.setTimerStatue(false);
             main.saveArena();
             main.getGameManager().preparation(arene);

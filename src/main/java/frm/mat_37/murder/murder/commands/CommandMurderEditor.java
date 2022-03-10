@@ -1,6 +1,6 @@
 package frm.mat_37.murder.murder.commands;
 
-import frm.mat_37.murder.murder.MArena;
+
 import frm.mat_37.murder.murder.Main;
 import frm.mat_37.murder.murder.gameManager.EditorManager;
 import org.bukkit.command.Command;

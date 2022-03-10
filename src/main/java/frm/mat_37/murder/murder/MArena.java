@@ -76,6 +76,7 @@ public class MArena
     public Player getMurder() {return murder;}
     public Player getDetective() {return detective;}
     public List<Player> getInnocent() {return innocent;}
+    public List<Player> getSpectators() {return spectators;}
     //endregion
 
     //region setters
@@ -123,6 +124,25 @@ public class MArena
         timeWaitWeapon  =  new TimeWaitWeapon(gameManager, this);
 
         timeWaitWeapon.runTaskTimer((Plugin) main, 0, 20);
+    }
+
+    public void addSpectators(Player spectator) {
+        spectators.add(spectator);
+    }
+
+    public void removeInnocent(Player player){
+        innocent.remove(player);
+    }
+
+    public void reset(){
+        listPlayers.clear();
+        innocent.clear();
+        murder = null;
+        detective = null;
+        spectators.clear();
+        state = "WAITTING";
+        main.areneConfig.set("arenes."+name+".statue", "WAITTING");
+        main.saveConfig();
     }
     //endregion
 

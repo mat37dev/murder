@@ -3,8 +3,8 @@ import frm.mat_37.murder.murder.commands.CommandMurder;
 import frm.mat_37.murder.murder.commands.CommandMurderEditor;
 import frm.mat_37.murder.murder.gameManager.EditorManager;
 import frm.mat_37.murder.murder.gameManager.GameManager;
+import frm.mat_37.murder.murder.listeners.MurderListener;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -40,8 +40,8 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         gameManager = new GameManager(this);
         editorManager = new EditorManager(this);
-        //PluginManager pm = getServer().getPluginManager();
-        //pm.registerEvents(gameManager,this);
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new MurderListener(this, gameManager),this);
 
         getCommand("murderEditor").setExecutor((CommandExecutor) new CommandMurderEditor(this, editorManager));
 
@@ -55,6 +55,13 @@ public class Main extends JavaPlugin {
         loadArena();
         //initialisation
         joueurInArene = new HashMap<>();
+    }
+
+    public void onDisable(){
+        for (MArena arene:listArene) {
+            areneConfig.set("arenes."+arene.getName()+".statue", "WAITTING");
+            saveArena();
+        }
     }
     //region arene.yml
     //vérification du dossier et du fichier lros du lancement du serveur

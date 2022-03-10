@@ -3,9 +3,6 @@ import frm.mat_37.murder.murder.MArena;
 import frm.mat_37.murder.murder.Main;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class EditorManager {
     Main main;
 

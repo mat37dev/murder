@@ -23,9 +23,9 @@ public class TimeWaitWeapon extends BukkitRunnable {
                 player.sendMessage("§f[§eMurder§f]  §bLe Murder reçoit son arme dans: "+timer+ " s");
             }
         }
-        else if(timer == 0){
-            for (Player player:arene.getListPlayers()) {
-                player.sendMessage("§f[§Murder§f]  §bLe murder vient de recevoir son arme");
+        else if(timer == 0) {
+            for (Player player : arene.getListPlayers()) {
+                player.sendMessage("§f[§eMurder§f]  §bLe murder vient de recevoir son arme");
             }
             gameManager.giveWeaponMurder(arene);
             cancel();
