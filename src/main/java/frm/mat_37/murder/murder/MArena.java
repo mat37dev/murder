@@ -6,7 +6,13 @@ import frm.mat_37.murder.murder.Runnable.TimeWaitWeapon;
 import frm.mat_37.murder.murder.Runnable.Timer;
 import frm.mat_37.murder.murder.gameManager.GameManager;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -15,6 +21,7 @@ import java.util.List;
 
 public class MArena
 {
+    private Main main;
     private String name;
     private List<Player> listPlayers;
     private String state;
@@ -28,6 +35,8 @@ public class MArena
     private Player murder;
     private Player detective;
     private List<Player> innocent;
+    private List<Player> spectators;
+    private ItemStack arcSol;
 
 
     //region constructor
@@ -42,7 +51,13 @@ public class MArena
         this.main = main;
         murder = null;
         detective = null;
-        innocent = new ArrayList<Player>();
+        innocent = new ArrayList<>();
+        spectators = new ArrayList<>();
+        //arc par terre
+        arcSol = new ItemStack(Material.BOW, 1);
+        ItemMeta customArc = arcSol.getItemMeta();
+        customArc.setDisplayName("§l§eArc A Terre");
+        arcSol.setItemMeta(customArc);
     }
 
     public MArena(Main main, String name, String state, List<Location> spawns, List<Location> spawnsGolds, Location lobby, Location spectatorSpawn)
@@ -58,7 +73,14 @@ public class MArena
         this.main = main;
         murder = null;
         detective = null;
-        innocent = new ArrayList<Player>();
+        innocent = new ArrayList<>();
+        spectators = new ArrayList<>();
+        arcSol = new ItemStack(Material.BOW, 1);
+        //arc par terre
+        arcSol = new ItemStack(Material.BOW, 1);
+        ItemMeta customArc = arcSol.getItemMeta();
+        customArc.setDisplayName("§l§eArc A Terre");
+        arcSol.setItemMeta(customArc);
     }
 
 
@@ -77,6 +99,7 @@ public class MArena
     public Player getDetective() {return detective;}
     public List<Player> getInnocent() {return innocent;}
     public List<Player> getSpectators() {return spectators;}
+    public ItemStack getArcSol() {return arcSol;}
     //endregion
 
     //region setters
@@ -134,7 +157,18 @@ public class MArena
         innocent.remove(player);
     }
 
+    public void arcATerre(Location location){
+        location.getWorld().dropItem(location, arcSol);
+    }
+
     public void reset(){
+        for (Entity e : spawns.get(0).getWorld().getEntities()) {
+            if(e instanceof Item){
+                if(((Item) e).getItemStack().isSimilar(arcSol)){
+                    e.remove();
+                }
+            }
+        }
         listPlayers.clear();
         innocent.clear();
         murder = null;

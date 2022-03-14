@@ -61,6 +61,8 @@ public class MurderListener implements Listener {
                         if(killer.getInventory().getItemInMainHand().isSimilar(gameManager.arcDetective)){
                             gameManager.detectiveKill(killer,main.joueurInArene.get(killer),victime);
                         }
+                        else if(killer.getInventory().getItemInMainHand().isSimilar(gameManager.arc))
+                            gameManager.killedByBow(killer, main.joueurInArene.get(killer),victime);
                         event.setCancelled(true);
                     }
                 }
@@ -112,7 +114,7 @@ public class MurderListener implements Listener {
             Player pls = (Player) e.getEntity();
             if(main.joueurInArene.containsKey(pls)) {
                 MArena arene = main.joueurInArene.get(pls);
-                if(e.getItem().getItemStack().isSimilar(gameManager.arcDetective)){
+                if(e.getItem().getItemStack().isSimilar(arene.getArcSol())){
                     if(pls == arene.getMurder())
                         e.setCancelled(true);
                     else{

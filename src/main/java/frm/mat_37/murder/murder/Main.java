@@ -57,10 +57,17 @@ public class Main extends JavaPlugin {
         joueurInArene = new HashMap<>();
     }
 
+    @Override
     public void onDisable(){
-        for (MArena arene:listArene) {
-            areneConfig.set("arenes."+arene.getName()+".statue", "WAITTING");
-            saveArena();
+        //téléporter les joueur au hub
+        for (MArena arene: listArene ) {
+            if(arene.getState()!="CREATE"){
+                for (Player player: arene.getListPlayers()) {
+                    player.teleport(hub);
+                    joueurInArene.remove(player);
+                }
+                arene.reset();
+            }
         }
     }
     //region arene.yml
